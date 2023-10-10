@@ -1,26 +1,29 @@
 <template>
   <div class="app">
-    <span v-if="errorFetchData" class="span-error-message">Ошибка при получении данных: <br> {{ errorMessage }}</span>
-
-    <!-- Модальное окно   -->
+    <span v-if="errorFetchData"
+      class="span-error-message">
+      Ошибка при получении данных: <br> {{ errorMessage }}</span>
     <div class="modal" v-if="isShowModal" @click.stop="hideModal">
       <div @click.stop class="modal__inner">
-        <select @click.stop @change="onchangeChoise" v-model="choiseAnimal">
-          <template v-for="animal in animals">
+        <label for="selection">
+          <select id="selection" @click.stop @change="onchangeChoise" v-model="choiseAnimal">
+          <template v-for="animal in animals" :key="animal.id">
             <option v-if="animal.cell === null" :value="animal.id">{{ animal.name }}</option>
           </template>
         </select>
+        </label>
       </div>
     </div>
-    <!-- Модальное окно   -->
-
-
-    <!-- КЛЕТКИ -->
     <div class="column">
       <div class="cellList">
         <p v-if="isLoadingCells">идет загрузка...</p>
-        <div class="cell" v-for="cell in cells" @click="showModal(cell.id)" @drop="animalOnEnd($event, currentAnimalId)"
-          @dragover.prevent @dragenter="OnDragenter($event, cell.id)" @dragleave="onDragleave($event)" :key="cell.id">
+        <div class="cell"
+          v-for="cell in cells"
+          @click="showModal(cell.id)"
+          @drop="animalOnEnd($event, currentAnimalId)"
+          @dragover.prevent
+          @dragenter="OnDragenter($event, cell.id)"
+          @dragleave="onDragleave($event)" :key="cell.id">
           <div @click.stop v-for="animal in animals" :key="animal.id">
             <animal-item v-bind:animal="animal" v-if="animal.cell === cell.id"
               @dragstart="dragstart($event, animal.id)" />
@@ -31,25 +34,25 @@
         <div class="newCellBtn" @click="addNewCell">+</div>
       </div>
     </div>
-    <!-- КЛЕТКИ -->
-
-
-    <!-- Временная Клетка с FORM -->
     <div class="column">
       <span></span>
       <div class="cell">
         <p v-if="isLoadingAnimals">идет загрузка...</p>
         <div v-for="animal in animals" :key="animal.id">
-          <animal-item v-bind:animal="animal" v-if="animal.cell === null" @dragstart="dragstart($event, animal.id)" />
+          <animal-item
+            v-bind:animal="animal"
+            v-if="animal.cell === null"
+            @dragstart="dragstart($event, animal.id)" />
         </div>
       </div>
       <form>
-        <input class="input__newAnimal" type="text" v-model.trim="name" />
+        <label :for="animal.id">
+          <input class="input__newAnimal" :id="snimsl.id" type="text" v-model.trim="name" />
+        </label>
         <button :disabled="btnDisabled" @click.prevent="addNewAnimal" class="btn">Добавить</button>
         <div v-if="errorName"><span>Пустое поле</span></div>
       </form>
     </div>
-    <!-- Временная Клетка с FORM -->
   </div>
 </template>
 
@@ -60,8 +63,9 @@ import {
   fetchForwardAnimal,
   fetchNewCell,
   fetchNewAnimal,
-  fetchDeleteCell
-} from "../src/api/client"
+  fetchDeleteCell,
+} from './api/client';
+
 export default {
 
   data() {
@@ -79,160 +83,148 @@ export default {
       isLoadingAnimals: false,
       isLoadingCells: false,
       errorFetchData: false,
-      errorMessage: ''
-    }
+      errorMessage: '',
+    };
   },
 
   methods: {
 
     onDragleave(e) {
-      e.target.style.boxShadow = ""
+      e.target.style.boxShadow = '';
     },
-
 
     dragstart(e, id) {
-      this.currentAnimalId = id
+      this.currentAnimalId = id;
     },
-
 
     hideModal() {
-      this.isShowModal = false
+      this.isShowModal = false;
     },
-
 
     async onchangeChoise() {
       try {
-        const data = await fetchForwardAnimal(this.choiseAnimal, this.targetCellId)
-        this.changeCellId(data.data?.animal)
-        this.targetCellId = ''
-        this.isShowModal = false
+        const data = await fetchForwardAnimal(this.choiseAnimal, this.targetCellId);
+        this.changeCellId(data.data?.animal);
+        this.targetCellId = '';
+        this.isShowModal = false;
       } catch (e) {
-        console.error(e.message)
-      }
-      finally {
-        this.isShowModal = false
+        console.error(e.message);
+      } finally {
+        this.isShowModal = false;
       }
     },
-
 
     async addNewCell() {
       try {
-        const cell = await fetchNewCell()
-        this.cells.push(cell.data?.cell)
+        const cell = await fetchNewCell();
+        this.cells.push(cell.data?.cell);
       } catch (error) {
-        console.error(error.message)
+        console.error(error.message);
       }
     },
 
-
     OnDragenter(e, id) {
-      e.target.style.boxShadow = "0px 0px 10px black"
-      this.targetCellId = id
+      e.target.style.boxShadow = '0px 0px 10px black';
+      this.targetCellId = id;
     },
-
 
     changeCellId(animal) {
-      const changedAnimal = animal
-      this.animal = this.animals.map(a => {
+      const changedAnimal = animal;
+      this.animal = this.animals.map((a) => {
         if (a.id === changedAnimal.id) {
-          a.cell = changedAnimal.cell
+          a.cell = changedAnimal.cell;
         }
-        return a
-      })
+        return a;
+      });
     },
-
 
     async animalOnEnd(e, animalId) {
       try {
-        const data = await fetchForwardAnimal(animalId, this.targetCellId)
-        this.changeCellId(data.data?.animal)
-        this.currentAnimalId = ''
+        const data = await fetchForwardAnimal(animalId, this.targetCellId);
+        this.changeCellId(data.data?.animal);
+        this.currentAnimalId = '';
       } catch (error) {
-        console.error(error.message)
+        console.error(error.message);
       }
     },
-
 
     addNewAnimal() {
       if (this.name.length === 0) {
-        this.errorName = true
-        return
+        this.errorName = true;
+        return;
       }
-      this.btnDisabled = true
+      this.btnDisabled = true;
       fetchNewAnimal(this.name)
-        .then(data => {
-          this.animals.push(data.data?.animal)
-          this.errorName = false
-          this.name = ''
+        .then((data) => {
+          this.animals.push(data.data?.animal);
+          this.errorName = false;
+          this.name = '';
         })
-        .catch(err => {
-          console.error(err.message)
+        .catch((err) => {
+          console.error(err.message);
         }).finally(() => {
-          this.btnDisabled = false
-        })
+          this.btnDisabled = false;
+        });
     },
-
 
     async removeCell(cellId) {
       try {
-        const data = await fetchDeleteCell(cellId)
-        const { cId, animals } = data
-        this.cells = this.cells.filter(c => c.id !== cId)
-        animals.forEach(a => {
-          this.animals = this.animals.map(animal => {
+        const data = await fetchDeleteCell(cellId);
+        const { cId, animals } = data;
+        this.cells = this.cells.filter((c) => c.id !== cId);
+        animals.forEach((a) => {
+          this.animals = this.animals.map((animal) => {
             if (a.id === animal.id) {
-              animal = a
+              animal = a;
             }
-            return animal
-          })
-        })
+            return animal;
+          });
+        });
       } catch (error) {
-        console.error(error.message)
+        console.error(error.message);
       }
     },
 
-
     showModal(cellId) {
-      this.isShowModal = true
-      this.targetCellId = cellId
+      this.isShowModal = true;
+      this.targetCellId = cellId;
     },
   },
 
   mounted() {
-    //Загрузка данных
-    this.isLoadingAnimals = true
-    this.isLoadingCells = true
-    //get request для получения массива ячеек
+    // Загрузка данных
+    this.isLoadingAnimals = true;
+    this.isLoadingCells = true;
+    // get request для получения массива ячеек
     fetchAnimals()
-      .then(animals => {
-        this.animals = animals
+      .then((animals) => {
+        this.animals = animals;
       })
-      .catch(e => {
-        this.errorFetchData = true
-        this.errorMessage = e.message
-        console.error(e)
+      .catch((e) => {
+        this.errorFetchData = true;
+        this.errorMessage = e.message;
+        console.error(e);
       })
       .finally(() => {
-        this.isLoadingCells = false
-      })
+        this.isLoadingCells = false;
+      });
 
-    //get request для получения массива животных
+    // get request для получения массива животных
     fetchCells()
-      .then(cells => {
-        this.cells = cells
+      .then((cells) => {
+        this.cells = cells;
       })
-      .catch(e => {
-        this.errorFetchData = true
-        this.errorMessage = e.message
-        console.error(e)
+      .catch((e) => {
+        this.errorFetchData = true;
+        this.errorMessage = e.message;
+        console.error(e);
       })
       .finally(() => {
-        this.isLoadingAnimals = false
-      })
+        this.isLoadingAnimals = false;
+      });
   },
 
-
-}
+};
 </script>
 
 <style>

@@ -6,20 +6,20 @@
 
 <script>
 export default {
-    name: "animal-item",
-    props: {
-        animal: {
-            type: Object,
-            required: true
-        }
+  name: 'animal-item',
+  props: {
+    animal: {
+      type: Object,
+      required: true,
     },
+  },
 
-    methods: {
-        dragEnd(id) {
-            this.$emit("dragstart", id)
-        }
-    }
-}
+  methods: {
+    dragEnd(id) {
+      this.$emit('dragstart', id);
+    },
+  },
+};
 </script>
 
 <style scoped>
