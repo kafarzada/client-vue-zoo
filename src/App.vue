@@ -1,56 +1,75 @@
 <template>
-  <div class="app">
-    <span v-if="errorFetchData"
-      class="span-error-message">
+  <div class='app'>
+    <span v-if='errorFetchData'>
+          class="span-error-message">
       Ошибка при получении данных: <br> {{ errorMessage }}</span>
-    <div class="modal" v-if="isShowModal" @click.stop="hideModal">
-      <div @click.stop class="modal__inner">
-        <label for="selection">
-          <select id="selection" @click.stop @change="onchangeChoise" v-model="choiseAnimal">
-          <template v-for="animal in animals" :key="animal.id">
-            <option v-if="animal.cell === null" :value="animal.id">{{ animal.name }}</option>
-          </template>
-        </select>
+    <div class='modal'
+         v-if='isShowModal'
+         @click.stop='hideModal'>
+      <div @click.stop
+           class='modal__inner'>
+        <label for='selection'>
+          <select id='selection'
+                  @click.stop
+                  @change='onchangeChoise'
+                  v-model='choiseAnimal'>
+            <template v-for='animal in animals'
+                      :key='animal.id'>
+              <option v-if='animal.cell === null'
+                      :value='animal.id'>{{ animal.name }}</option>
+            </template>
+          </select>
         </label>
       </div>
     </div>
-    <div class="column">
-      <div class="cellList">
-        <p v-if="isLoadingCells">идет загрузка...</p>
-        <div class="cell"
-          v-for="cell in cells"
-          @click="showModal(cell.id)"
-          @drop="animalOnEnd($event, currentAnimalId)"
-          @dragover.prevent
-          @dragenter="OnDragenter($event, cell.id)"
-          @dragleave="onDragleave($event)" :key="cell.id">
-          <div @click.stop v-for="animal in animals" :key="animal.id">
-            <animal-item v-bind:animal="animal" v-if="animal.cell === cell.id"
-              @dragstart="dragstart($event, animal.id)" />
+    <div class='column'>
+      <div class='cellList'>
+        <p v-if='isLoadingCells'>идет загрузка...</p>
+        <div class='cell'
+             v-for='cell in cells'
+             @click='showModal(cell.id)'
+             @drop='animalOnEnd($event, currentAnimalId)'
+             @dragover.prevent
+             @dragenter='OnDragenter($event, cell.id)'
+             @dragleave='onDragleave($event)'
+             :key='cell.id'>
+          <div @click.stop
+               v-for='animal in animals'
+               :key='animal.id'>
+            <animal-item v-bind:animal='animal'
+                         v-if='animal.cell === cell.id'
+                         @dragstart='dragstart($event, animal.id)' />
           </div>
-          <span @click.stop="removeCell(cell.id)" class="deletecell">x</span>
+          <span @click.stop='removeCell(cell.id)'
+                class='deletecell'>x</span>
         </div>
 
-        <div class="newCellBtn" @click="addNewCell">+</div>
+        <div class='newCellBtn'
+             @click='addNewCell'>+</div>
       </div>
     </div>
-    <div class="column">
+    <div class='column'>
       <span></span>
-      <div class="cell">
-        <p v-if="isLoadingAnimals">идет загрузка...</p>
-        <div v-for="animal in animals" :key="animal.id">
-          <animal-item
-            v-bind:animal="animal"
-            v-if="animal.cell === null"
-            @dragstart="dragstart($event, animal.id)" />
+      <div class='cell'>
+        <p v-if='isLoadingAnimals'>идет загрузка...</p>
+        <div v-for='animal in animals'
+             :key='animal.id'>
+          <animal-item v-bind:animal='animal'
+                       v-if='animal.cell === null'
+                       @dragstart='dragstart($event, animal.id)' />
         </div>
       </div>
       <form>
-        <label :for="animal.id">
-          <input class="input__newAnimal" :id="snimsl.id" type="text" v-model.trim="name" />
+        <label :for='animal.id'>
+          <input class='input__newAnimal'
+                 :id='snimsl.id'
+                 type='text'
+                 v-model.trim='name' />
         </label>
-        <button :disabled="btnDisabled" @click.prevent="addNewAnimal" class="btn">Добавить</button>
-        <div v-if="errorName"><span>Пустое поле</span></div>
+        <button :disabled='btnDisabled'
+                @click.prevent='addNewAnimal'
+                class='btn'>Добавить</button>
+        <div v-if='errorName'><span>Пустое поле</span></div>
       </form>
     </div>
   </div>
