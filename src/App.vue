@@ -60,9 +60,9 @@
         </div>
       </div>
       <form>
-        <label :for='animal.id'>
+        <label for='animalname'>
           <input class='input__newAnimal'
-                 :id='snimsl.id'
+                 id='animalname'
                  type='text'
                  v-model.trim='name' />
         </label>
@@ -212,31 +212,15 @@ export default {
 
   mounted() {
     // Загрузка данных
-    this.isLoadingAnimals = true;
-    this.isLoadingCells = true;
-    // get request для получения массива ячеек
-    fetchAnimals()
-      .then((animals) => {
-        this.animals = animals;
+    Promise.all([fetchAnimals(), fetchCells()])
+      .then((data) => {
+        console.log(data);
+        [this.animals, this.cells] = data;
       })
-      .catch((e) => {
+      .catch((error) => {
         this.errorFetchData = true;
-        this.errorMessage = e.message;
-        console.error(e);
-      })
-      .finally(() => {
-        this.isLoadingCells = false;
-      });
-
-    // get request для получения массива животных
-    fetchCells()
-      .then((cells) => {
-        this.cells = cells;
-      })
-      .catch((e) => {
-        this.errorFetchData = true;
-        this.errorMessage = e.message;
-        console.error(e);
+        this.errorMessage = error.message;
+        console.error(error);
       })
       .finally(() => {
         this.isLoadingAnimals = false;

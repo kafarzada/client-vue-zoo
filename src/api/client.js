@@ -9,7 +9,7 @@ export const fetchCells = async function fetchCells() {
   }
 };
 
-export const fetchAnimals = async function fetchAnimals() {
+export const fetchAnimals = async function () {
   try {
     const data = await axios('http://localhost:3000/animal');
     return data?.data?.animals;
@@ -18,12 +18,12 @@ export const fetchAnimals = async function fetchAnimals() {
   }
 };
 
-export const fetchForwardAnimal = async function fetchForwardAnimal(animalId, targetCellId) {
+export const fetchForwardAnimal = async function (animalId, targetCellId) {
   const result = await axios.patch(`http://localhost:3000/animal/${animalId}/${targetCellId}`);
   return result;
 };
 
-export const fetchNewCell = async function fetchNewCell() {
+export const fetchNewCell = async function () {
   try {
     const newCell = axios.post('http://localhost:3000/cell', {});
     return newCell;
@@ -32,7 +32,7 @@ export const fetchNewCell = async function fetchNewCell() {
   }
 };
 
-export const fetchNewAnimal = async function fetchNewAnimal(name) {
+export const fetchNewAnimal = async function (name) {
   try {
     const data = await axios.post('http://localhost:3000/animal', { name });
     return data;
@@ -41,7 +41,7 @@ export const fetchNewAnimal = async function fetchNewAnimal(name) {
   }
 };
 
-export const fetchDeleteCell = async function fetchDeleteCell(cellId) {
+export const fetchDeleteCell = async function (cellId) {
   try {
     const response = await axios.delete(`http://localhost:3000/cell/${cellId}`);
     const { cId, animals } = response.data.data;

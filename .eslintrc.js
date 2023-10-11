@@ -19,5 +19,6 @@ module.exports = {
     'vue/html-quotes': ['error', 'single', {
       avoidEscape: false,
     }],
+    'func-names': ['error', 'as-needed'],
   },
 };
